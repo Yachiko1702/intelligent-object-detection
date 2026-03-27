@@ -16,7 +16,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
-COPY app.py .
+COPY app_demo.py app.py
 COPY templates/ templates/
 COPY static/ static/
 
