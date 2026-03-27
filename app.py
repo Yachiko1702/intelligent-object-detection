@@ -54,6 +54,108 @@ except ImportError as e:
     from flask_cors import CORS
     from flask_socketio import SocketIO, emit
     OPENCV_AVAILABLE = False
+    # Create a dummy cv2 module to prevent NameError
+    class DummyCV2:
+        COLOR_BGR2HSV = 0
+        COLOR_BGR2LAB = 1
+        COLOR_BGR2GRAY = 2
+        COLOR_BGR2RGB = 3
+        TERM_CRITERIA_EPS = 1
+        TERM_CRITERIA_MAX_ITER = 2
+        KMEANS_RANDOM_CENTERS = 2
+        THRESH_BINARY = 0
+        RETR_EXTERNAL = 0
+        CHAIN_APPROX_SIMPLE = 1
+        CAP_DSHOW = 0
+        CAP_ANY = 0
+        CAP_MSMF = 0
+        CAP_PROP_FRAME_WIDTH = 3
+        CAP_PROP_FRAME_HEIGHT = 4
+        CAP_PROP_FPS = 5
+        CAP_PROP_BUFFERSIZE = 6
+        FONT_HERSHEY_SIMPLEX = 0
+        
+        @staticmethod
+        def cvtColor(*args, **kwargs):
+            raise NotImplementedError("OpenCV not available")
+        
+        @staticmethod
+        def kmeans(*args, **kwargs):
+            raise NotImplementedError("OpenCV not available")
+        
+        @staticmethod
+        def createCLAHE(*args, **kwargs):
+            raise NotImplementedError("OpenCV not available")
+        
+        @staticmethod
+        def absdiff(*args, **kwargs):
+            raise NotImplementedError("OpenCV not available")
+        
+        @staticmethod
+        def threshold(*args, **kwargs):
+            raise NotImplementedError("OpenCV not available")
+        
+        @staticmethod
+        def dilate(*args, **kwargs):
+            raise NotImplementedError("OpenCV not available")
+        
+        @staticmethod
+        def findContours(*args, **kwargs):
+            raise NotImplementedError("OpenCV not available")
+        
+        @staticmethod
+        def contourArea(*args, **kwargs):
+            raise NotImplementedError("OpenCV not available")
+        
+        @staticmethod
+        def boundingRect(*args, **kwargs):
+            raise NotImplementedError("OpenCV not available")
+        
+        @staticmethod
+        def arcLength(*args, **kwargs):
+            raise NotImplementedError("OpenCV not available")
+        
+        @staticmethod
+        def approxPolyDP(*args, **kwargs):
+            raise NotImplementedError("OpenCV not available")
+        
+        @staticmethod
+        def convexHull(*args, **kwargs):
+            raise NotImplementedError("OpenCV not available")
+        
+        @staticmethod
+        def convexityDefects(*args, **kwargs):
+            raise NotImplementedError("OpenCV not available")
+        
+        @staticmethod
+        def inRange(*args, **kwargs):
+            raise NotImplementedError("OpenCV not available")
+        
+        @staticmethod
+        def getTextSize(*args, **kwargs):
+            raise NotImplementedError("OpenCV not available")
+        
+        @staticmethod
+        def rectangle(*args, **kwargs):
+            raise NotImplementedError("OpenCV not available")
+        
+        @staticmethod
+        def putText(*args, **kwargs):
+            raise NotImplementedError("OpenCV not available")
+        
+        @staticmethod
+        def circle(*args, **kwargs):
+            raise NotImplementedError("OpenCV not available")
+        
+        @staticmethod
+        def line(*args, **kwargs):
+            raise NotImplementedError("OpenCV not available")
+        
+        @staticmethod
+        def VideoCapture(*args, **kwargs):
+            raise NotImplementedError("OpenCV not available")
+    
+    cv2 = DummyCV2()
     
     # Optional imports with error handling
     OCR_AVAILABLE = False
