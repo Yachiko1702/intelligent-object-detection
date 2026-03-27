@@ -1,0 +1,23 @@
+# Core Computer Vision & AI (without OpenCV for cloud compatibility)
+torch>=2.0.0
+torchvision>=0.15.0
+numpy>=1.24.0
+Pillow>=9.0.0
+
+# Web Framework
+Flask>=2.3.0
+Flask-SocketIO>=5.3.0
+Flask-CORS>=4.0.0
+gevent>=23.0.0
+
+# System Monitoring
+psutil>=5.9.0
+
+# HTTP Client
+requests>=2.28.0
+
+# Production Server
+gunicorn>=20.0.0
+
+# Environment
+setuptools>=65.0.0

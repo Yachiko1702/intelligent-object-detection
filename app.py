@@ -45,6 +45,15 @@ try:
     from flask_cors import CORS
     from flask_socketio import SocketIO, emit
     logger.info("Core libraries imported successfully")
+    OPENCV_AVAILABLE = True
+except ImportError as e:
+    logger.warning(f"OpenCV not available: {e}")
+    logger.info("Running in demo mode without computer vision")
+    import numpy as np
+    from flask import Flask, render_template, request, jsonify
+    from flask_cors import CORS
+    from flask_socketio import SocketIO, emit
+    OPENCV_AVAILABLE = False
     
     # Optional imports with error handling
     OCR_AVAILABLE = False
