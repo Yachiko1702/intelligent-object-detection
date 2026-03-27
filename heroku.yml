@@ -1,0 +1,48 @@
+# Heroku Deployment Configuration
+
+# Build
+heroku-prebuild:
+  commands:
+    - echo "Pre-build setup for Object Detection System"
+
+# Build process
+build:
+  docker:
+    web: Dockerfile
+    worker: Dockerfile
+  config:
+    MODEL_TYPE: detection
+    MODEL_PATH: yolov8l.pt
+    CONFIDENCE_THRESHOLD: 0.25
+    INFERENCE_SIZE: 1280
+    MAX_FPS: 30
+    ENABLE_ADAPTIVE_THRESHOLD: true
+    ENABLE_OBJECT_GROUPING: true
+    ENABLE_COLOR_ANALYSIS: true
+    PORT: 5000
+
+# Run process
+run:
+  web: python app.py
+  worker: python worker.py
+
+# Addons
+addons:
+  - heroku-redis:hobby-dev
+  - heroku-postgresql:hobby-dev
+
+# Formation
+formation:
+  web:
+    quantity: 1
+    size: basic
+  worker:
+    quantity: 1
+    size: basic
+
+# Scaling
+scaling:
+  web:
+    dyno_count: 1
+    max_dyno_count: 5
+    min_dyno_count: 1

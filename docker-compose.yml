@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  object-detection:
+    build: .
+    container_name: intelligent-object-detection
+    ports:
+      - "5000:5000"
+    environment:
+      - MODEL_TYPE=detection
+      - MODEL_PATH=yolov8l.pt
+      - CONFIDENCE_THRESHOLD=0.25
+      - INFERENCE_SIZE=1280
+      - MAX_FPS=30
+      - JPEG_QUALITY=95
+      - MAX_DETECTIONS=100
+      - ENABLE_ADAPTIVE_THRESHOLD=true
+      - ENABLE_OBJECT_GROUPING=true
+      - ENABLE_COLOR_ANALYSIS=true
+      - ENABLE_POSE=false
+      - ENABLE_OCR=false
+    volumes:
+      - ./models:/app/models:ro  # Read-only model files
+      - ./logs:/app/logs  # Log files
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: '2'
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/stats"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Optional: Redis for session storage
+  redis:
+    image: redis:7-alpine
+    container_name: detection-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+  # Optional: Nginx reverse proxy
+  nginx:
+    image: nginx:alpine
+    container_name: detection-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - object-detection
+    restart: unless-stopped
+
+volumes:
+  redis_data:
+
+networks:
+  default:
+    name: detection-network

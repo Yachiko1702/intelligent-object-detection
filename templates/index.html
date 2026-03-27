@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Project - Object Detector</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-left">
+                <div class="logo">
+                    <div class="logo-icon">FP</div>
+                    <div class="logo-text">Final Project</div>
+                </div>
+                <span class="badge badge-primary">Live Detection</span>
+            </div>
+            <div class="header-right">
+                <div id="connectionStatus" class="status-indicator error">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Connecting...</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <section class="video-section">
+                <div class="video-container">
+                    <div class="video-wrapper">
+                        <img id="videoFeed" class="video-feed" src="" alt="Live camera feed" />
+                        <div id="detectionOverlay" class="detection-overlay"></div>
+                        <div id="loadingOverlay" class="loading-overlay">
+                            <div class="spinner"></div>
+                            <p>Waiting for camera...</p>
+                        </div>
+                    </div>
+                    <div class="video-controls">
+                        <button id="fullscreenBtn" class="btn btn-secondary">Fullscreen</button>
+                        <button id="snapshotBtn" class="btn btn-secondary">Snapshot</button>
+                    </div>
+                </div>
+            </section>
+
+            <aside class="sidebar">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Live Stats</div>
+                    </div>
+                    <div class="card-body stat-grid">
+                        <div class="stat-item"><div class="stat-label">FPS</div><div id="fpsValue" class="stat-value">0</div></div>
+                        <div class="stat-item"><div class="stat-label">Inference</div><div id="inferenceValue" class="stat-value">0 ms</div></div>
+                        <div class="stat-item"><div class="stat-label">Objects</div><div id="objectsValue" class="stat-value">0</div></div>
+                        <div class="stat-item"><div class="stat-label">Model</div><div id="modelValue" class="stat-value">--</div></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header"><div class="card-title">Detections</div></div>
+                    <div class="card-body detection-list" id="detectionList">Waiting for detections...</div>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <div id="snapshotModal" class="snapshot-modal">
+        <div class="snapshot-modal-content">
+            <button id="modalClose" class="modal-close">×</button>
+            <img id="snapshotImage" src="" alt="Snapshot" />
+            <div id="downloadSnapshot" class="btn btn-primary">Download Snapshot</div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/socket.io.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+# Render Deployment Configuration
+
+services:
+  # Main web service
+  - type: web
+    name: object-detection
+    env: docker
+    repo: https://github.com/yourusername/intelligent-object-detection
+    rootDir: /
+    dockerfilePath: ./Dockerfile
+    dockerContext: ./
+    healthCheckPath: /api/stats
+    healthCheckTimeout: 100
+    autoDeploy: true
+    
+    # Environment variables
+    envVars:
+      - key: MODEL_TYPE
+        value: detection
+      - key: MODEL_PATH
+        value: yolov8l.pt
+      - key: CONFIDENCE_THRESHOLD
+        value: 0.25
+      - key: INFERENCE_SIZE
+        value: 1280
+      - key: MAX_FPS
+        value: 30
+      - key: ENABLE_ADAPTIVE_THRESHOLD
+        value: true
+      - key: ENABLE_OBJECT_GROUPING
+        value: true
+      - key: ENABLE_COLOR_ANALYSIS
+        value: true
+      - key: PORT
+        value: 5000
+      - key: HOST
+        value: 0.0.0.0
+    
+    # Instance configuration
+    instanceCount: 1
+    instanceType: basic
+    plan: starter
+    
+    # Build and deployment
+    buildCommand: docker build -t object-detection .
+    startCommand: python app.py
+    
+  # Redis service for caching
+  - type: redis
+    name: detection-redis
+    plan: starter
+    ipAllowList: []
+    
+# Databases
+databases:
+  - name: detection-db
+    plan: starter
+    
+# Static file serving
+staticSites:
+  - name: detection-static
+    path: ./static
+    plan: starter
