@@ -10,7 +10,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 # Install OS dependencies required by OpenCV and skimage-like libs
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libgl1-mesa-glx \
+    libgl1 \
+    libglx0 \
+    libxrender1 \
+    libx11-6 \
     libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
