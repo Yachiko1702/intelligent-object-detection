@@ -156,59 +156,69 @@ except ImportError as e:
             raise NotImplementedError("OpenCV not available")
     
     cv2 = DummyCV2()
-    
-    # Optional imports with error handling
-    OCR_AVAILABLE = False
-    try:
-        import pytesseract
-        import easyocr
-        OCR_AVAILABLE = True
-        logger.info("OCR libraries available")
-    except ImportError:
-        logger.warning("OCR libraries not installed. Text detection features will be limited.")
-    
-    FACE_RECOGNITION_AVAILABLE = False
-    try:
-        import face_recognition
-        FACE_RECOGNITION_AVAILABLE = True
-        logger.info("Face recognition available")
-    except ImportError:
-        logger.warning("Face recognition not available")
-        
-    FACE_LANDMARKS_AVAILABLE = False
-    try:
-        import dlib
-        FACE_LANDMARKS_AVAILABLE = True
-        logger.info("dlib available for face landmarks")
-    except ImportError:
-        try:
-            import mediapipe as mp
-            FACE_LANDMARKS_AVAILABLE = True
-            logger.info("MediaPipe available for face landmarks")
-        except ImportError:
-            logger.warning("Face landmark detection not available")
-    
-    # MediaPipe Hands for finger detection (using legacy API)
-    HAND_DETECTION_AVAILABLE = False
-    hands_detector = None
+
+# Initialize availability flags outside try blocks
+OCR_AVAILABLE = False
+ULTRALYTICS_AVAILABLE = False
+FACE_RECOGNITION_AVAILABLE = False
+FACE_LANDMARKS_AVAILABLE = False
+HAND_DETECTION_AVAILABLE = False
+
+# Optional imports with error handling
+try:
+    import pytesseract
+    import easyocr
+    OCR_AVAILABLE = True
+    logger.info("OCR libraries available")
+except ImportError:
+    logger.warning("OCR libraries not installed. Text detection features will be limited.")
+
+try:
+    import ultralytics
+    ULTRALYTICS_AVAILABLE = True
+    logger.info("Ultralytics available for YOLO models")
+except ImportError:
+    logger.warning("Ultralytics not available. AI detection features will be limited.")
+
+try:
+    import face_recognition
+    FACE_RECOGNITION_AVAILABLE = True
+    logger.info("Face recognition available")
+except ImportError:
+    logger.warning("Face recognition not available")
+
+try:
+    import dlib
+    FACE_LANDMARKS_AVAILABLE = True
+    logger.info("dlib available for face landmarks")
+except ImportError:
     try:
         import mediapipe as mp
-        # Workaround for mediapipe not exposing solutions directly in some environments
-        if not hasattr(mp, 'solutions'):
-            import mediapipe.python.solutions as mp_solutions
-            mp.solutions = mp_solutions
-            
-        mp_hands = mp.solutions.hands
-        hands_detector = mp_hands.Hands(
-            static_image_mode=False,
-            max_num_hands=2,
-            min_detection_confidence=0.5,
-            min_tracking_confidence=0.5
-        )
-        HAND_DETECTION_AVAILABLE = True
-        logger.info("MediaPipe Hands loaded for finger detection")
-    except Exception as e:
-        logger.warning(f"MediaPipe Hands not available: {e}")
+        FACE_LANDMARKS_AVAILABLE = True
+        logger.info("MediaPipe available for face landmarks")
+    except ImportError:
+        logger.warning("Face landmark detection not available")
+
+# MediaPipe Hands for finger detection (using legacy API)
+hands_detector = None
+try:
+    import mediapipe as mp
+    # Workaround for mediapipe not exposing solutions directly in some environments
+    if not hasattr(mp, 'solutions'):
+        import mediapipe.python.solutions as mp_solutions
+        mp.solutions = mp_solutions
+        
+    mp_hands = mp.solutions.hands
+    hands_detector = mp_hands.Hands(
+        static_image_mode=False,
+        max_num_hands=2,
+        min_detection_confidence=0.5,
+        min_tracking_confidence=0.5
+    )
+    HAND_DETECTION_AVAILABLE = True
+    logger.info("MediaPipe Hands loaded for finger detection")
+except Exception as e:
+    logger.warning(f"MediaPipe Hands not available: {e}")
     
 except Exception as e:
     logger.error(f"Import error: {e}")
