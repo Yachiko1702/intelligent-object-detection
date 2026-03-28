@@ -540,7 +540,7 @@ style.textContent = `
     }
     
     .detection-detail {
-        font-size: 0.85rem;
+        font-size: 0.85r    em;
         color: #94a3b8;
         margin-top: 4px;
         padding: 2px 0;

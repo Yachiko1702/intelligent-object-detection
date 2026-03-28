@@ -8,6 +8,12 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
+# Install OS dependencies required by OpenCV and skimage-like libs
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
+
 # Copy requirements first for better caching
 COPY requirements_minimal.txt requirements.txt
 

@@ -1542,17 +1542,29 @@ class DetectorApp:
         try:
             # Load unified model (detection + pose + segmentation)
             self.model = DetectionModel(self.config)
-            
-            # Start camera
-            self.camera = CameraManager(self.config.camera_index)
-            if not self.camera.start():
-                return False
-                
+
+            # Read camera settings from environment (Render cloud has no local webcam)
+            camera_disabled = os.getenv("DISABLE_CAMERA", "false").lower() in ("1", "true", "yes")
+            if not camera_disabled:
+                camera_index = os.getenv("CAMERA_INDEX")
+                if camera_index is not None:
+                    try:
+                        self.config.camera_index = int(camera_index)
+                    except ValueError:
+                        logger.warning(f"Invalid CAMERA_INDEX='{camera_index}', using config value {self.config.camera_index}")
+
+                self.camera = CameraManager(self.config.camera_index)
+                if not self.camera.start():
+                    logger.warning("Camera not available; continuing in model-only mode")
+                    self.camera = None
+            else:
+                logger.info("Camera disabled via DISABLE_CAMERA environment variable")
+
             # Start detection loop
             self.running = True
             self.detection_thread = threading.Thread(target=self._detection_loop, daemon=True)
             self.detection_thread.start()
-            
+
             logger.info("Detector app initialized successfully")
             return True
             
@@ -1852,7 +1864,12 @@ class DetectorApp:
         while self.running:
             try:
                 loop_start = time.perf_counter()
-                
+
+                if self.camera is None:
+                    # No camera available (e.g., cloud environment), keep model loaded.
+                    time.sleep(0.1)
+                    continue
+
                 frame = self.camera.get_frame()
                 if frame is None:
                     time.sleep(0.001)
@@ -2076,9 +2093,11 @@ if __name__ == '__main__':
         print("="*60 + "\n")
         
         logger.info("Starting server...")
-        logger.info("Open http://127.0.0.1:5000 in your browser")
-        logger.info("Or http://localhost:5000")
-        socketio.run(app, host='0.0.0.0', port=5000, debug=False, use_reloader=False)
+        host = os.environ.get("HOST", "0.0.0.0")
+        port = int(os.environ.get("PORT", 5000))
+        logger.info(f"Open http://127.0.0.1:{port} in your browser")
+        logger.info(f"Or http://localhost:{port}")
+        socketio.run(app, host=host, port=port, debug=False, use_reloader=False)
     except KeyboardInterrupt:
         logger.info("Shutting down...")
     finally:
